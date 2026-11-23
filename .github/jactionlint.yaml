@@ -1,0 +1,13 @@
+profile: default
+
+rules:
+  unused-ignore: error
+
+# Исключение согласовано владельцем, тикет #2.
+ignores:
+  - rule: dangerous-triggers
+    file: .github/workflows/claudecode.yml
+    reason: >-
+      issue_comment нужен для @claude; автор комментария ограничен,
+      код PR не запускается до агента
+    expires: "2027-02-24"

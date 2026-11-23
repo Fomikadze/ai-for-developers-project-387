@@ -30,7 +30,7 @@ hk ставится через mise, конфигурация — `hk.pkl` в к
 
 | Инструмент | Задача mise | Что проверяет | Конфигурация |
 | --- | --- | --- | --- |
-| actionlint | `lint:workflows` | workflow GitHub Actions | — |
+| jactionlint (с shellcheck) | `lint:workflows` | корректность и безопасность workflow GitHub Actions, профиль `default`, `--strict-exit` | `.github/jactionlint.yaml` |
 | check-jsonschema | `lint:schemas` | workflow, `renovate.json` и конфигурация release-please по официальным схемам | — |
 | hadolint | `lint:docker` | все `Dockerfile*` в репозитории | — |
 | rumdl | `lint:markdown` | Markdown | `.rumdl.toml` |
@@ -85,9 +85,20 @@ hk ставится через mise, конфигурация — `hk.pkl` в к
 ## CI
 
 - `hexlet-check.yml` — автоматические тесты Хекслета, не трогаем и не меняем.
-- `.github/workflows/check.yml` — один job: `mise run install`, затем `mise run check`. Запускается на push в любую ветку и на pull request, полная история git нужна для `lint:commits`, `api:breaking`, `coverage:diff` и поиска секретов.
+- `.github/workflows/check.yml` — один job: `mise run install`, затем `mise run check`. Запускается на push в `main` и на pull request, полная история git нужна для `lint:commits`, `api:breaking`, `coverage:diff` и поиска секретов.
 - Задачи `lint:*`, `test:*` и `mise run install` пропускают `backend`, `frontend` и `typespec`, пока нет `gradlew` или `package.json`.
 - В `frontend/` и `typespec/` должен быть закоммичен `pnpm-lock.yaml`. Скрипты во `frontend/package.json`: `lint`, `format:check`, `typecheck`, `generate`, `test`, `dev`.
+- Actions закрепляются полным SHA, исходная версия пишется в комментарии (`# v7.0.1`).
+- Исключения jactionlint пишутся только в `ignores` файла `.github/jactionlint.yaml` с правилом, путём, причиной и датой `expires`. Сейчас одно: `dangerous-triggers` для `claudecode.yml`, пересмотр до 2027-02-24. После этой даты проверка падает (`expired-ignore`), лишнее исключение тоже ошибка (`unused-ignore`). Файл `hexlet-check.yml` помечен как автогенерируемый, поэтому jactionlint не применяет к нему правила групп `policy` и `style` (поведение `skip-policy`). Остальные проверки для него работают.
+
+### Claude Code по комментариям
+
+`.github/workflows/claudecode.yml` запускает [Claude Code Action](https://code.claude.com/docs/en/github-actions) по комментарию с `@claude` в issue или PR.
+
+- Запуск разрешён людям с ролью OWNER, MEMBER или COLLABORATOR, право записи action проверяет сам. На PR из форка job завершается ошибкой до запуска агента.
+- Модель `claude-opus-5-5`, провайдер Anthropic по подписке: секрет `CLAUDE_CODE_OAUTH_TOKEN` и установленный Claude GitHub App. Токен из `claude setup-token` действует год.
+- `GITHUB_TOKEN` только читает, `id-token: write` нужен для обмена на токен App. Права самого App шире: он может пушить ветки.
+- Таймаут 15 минут. Запуски по одной задаче идут по очереди (`concurrency` на уровне job), чужие комментарии без доступа в очередь не попадают.
 
 ## Docker
 
