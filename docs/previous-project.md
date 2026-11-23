@@ -30,3 +30,7 @@
 | [386#67](https://github.com/Fomikadze/ai-for-developers-project-386/issues/67), [386#68](https://github.com/Fomikadze/ai-for-developers-project-386/issues/68) | одно правило пересечения интервалов и нейтральный `TimeRange` |
 
 Словарь предметной области — [GLOSSARY.md](../GLOSSARY.md).
+
+## Релизы
+
+Версии `0.1.0`–`0.3.0` и их описание — в [CHANGELOG.md первого проекта](https://github.com/Fomikadze/ai-for-developers-project-386/blob/main/CHANGELOG.md). Записи о новых релизах release-please добавляет в [CHANGELOG.md](../CHANGELOG.md) этого репозитория.
