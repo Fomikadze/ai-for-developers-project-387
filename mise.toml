@@ -9,7 +9,8 @@ hk = "2.10.0"
 pitchfork = "2.32.4"
 # Проверки качества (см. docs/tooling.md)
 uv = "0.13.6"                       # нужен для pipx-инструментов
-actionlint = "1.7.12"
+jactionlint = "2.6.0"
+shellcheck = "0.11.0"               # проверка run-скриптов внутри jactionlint
 "github:oasdiff/oasdiff" = "1.35.0"
 betterleaks = "1.9.0"
 osv-scanner = "2.7.0"
@@ -117,8 +118,8 @@ depends = ["sdk"]
 run = "scripts/e2e.sh"
 
 [tasks."lint:workflows"]
-description = "actionlint: GitHub Actions workflow"
-run = "actionlint"
+description = "jactionlint: корректность и безопасность GitHub Actions workflow"
+run = "jactionlint --strict-exit"
 
 [tasks."lint:schemas"]
 description = "check-jsonschema: workflow, renovate.json и конфигурация release-please по схемам"
