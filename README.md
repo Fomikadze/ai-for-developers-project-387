@@ -67,7 +67,7 @@ mise run hooks:install   # git-хуки hk
 docker compose up --build   # приложение на http://localhost:8080
 ```
 
-Режим разработки (бэкенд на 8080, фронтенд на <http://localhost:5173>):
+Режим разработки (бэкенд на 8080, фронтенд на `http://localhost:5173`):
 
 ```bash
 mise daemons start
