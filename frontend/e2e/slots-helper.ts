@@ -1,9 +1,7 @@
-import { expect, type APIRequestContext } from '@playwright/test';
+import { expect, type APIRequestContext, type Page } from '@playwright/test';
 
 const ZONE = 'Asia/Almaty';
 
-const dayKey = (iso: string) =>
-  new Intl.DateTimeFormat('en-CA', { timeZone: ZONE }).format(new Date(iso));
 const timeKey = (iso: string) =>
   new Intl.DateTimeFormat('en-GB', {
     timeZone: ZONE,
@@ -15,8 +13,6 @@ const timeKey = (iso: string) =>
 export interface PickedSlot {
   /** Начало слота, ISO UTC. */
   start: string;
-  /** Номер дня среди дней со свободными слотами: так его находит календарь в интерфейсе. */
-  dayIndex: number;
   /** Время `HH:mm` по Asia/Almaty. */
   time: string;
 }
@@ -34,9 +30,27 @@ export async function pickFreeSlot(
   const response = await request.get(`/api/meeting-types/${typeId}/slots`);
   expect(response.ok()).toBeTruthy();
   const free = ((await response.json()) as { start: string }[]).map((slot) => slot.start);
-  const days = [...new Set(free.map(dayKey))];
   const candidates = free.filter((start) => timeKey(start) === time);
   expect(candidates, `нет свободных слотов на ${time}`).not.toHaveLength(0);
   const start = candidates[Math.floor(Math.random() * candidates.length)];
-  return { start, dayIndex: days.indexOf(dayKey(start)), time };
+  return { start, time };
+}
+
+/**
+ * Выбирает день слота в календаре. Окно записи может переходить на следующий месяц,
+ * поэтому день ищется по дате, а если его нет на текущей странице — листаем вперёд.
+ */
+export async function openDay(page: Page, slot: PickedSlot, lng = 'ru'): Promise<void> {
+  const date = new Intl.DateTimeFormat(lng, {
+    timeZone: ZONE,
+    day: 'numeric',
+    month: 'long',
+  }).format(new Date(slot.start));
+  const day = page.getByRole('button', { name: new RegExp(`^${date}, `) });
+  const nextMonth = page.getByRole('button', { name: /^(Следующий месяц|Next month)$/ });
+  await expect(nextMonth).toBeVisible();
+  if ((await day.count()) === 0) {
+    await nextMonth.click();
+  }
+  await day.click();
 }

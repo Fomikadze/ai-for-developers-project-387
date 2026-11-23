@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { pickFreeSlot } from './slots-helper';
+import { openDay, pickFreeSlot } from './slots-helper';
 
 test('бронь гостя видна владельцу во вкладке «Предстоящие встречи»', async ({ page, request }) => {
   const stamp = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -20,10 +20,7 @@ test('бронь гостя видна владельцу во вкладке «
 
   // Случайный день и своё время суток: бэкенд живёт между прогонами, другие тесты занимают другое время.
   const picked = await pickFreeSlot(request, id, '15:00');
-  await page
-    .getByRole('button', { name: /свободных слотов/ })
-    .nth(picked.dayIndex)
-    .click();
+  await openDay(page, picked);
   await page.getByRole('button', { name: picked.time, exact: true }).click();
   await page.getByRole('button', { name: 'Продолжить' }).click();
 

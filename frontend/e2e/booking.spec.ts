@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { pickFreeSlot } from './slots-helper';
+import { openDay, pickFreeSlot } from './slots-helper';
 
 const cases = [
   {
@@ -11,8 +11,6 @@ const cases = [
   },
   { lng: 'en', time: '10:30', next: 'Continue', submit: 'Book', done: 'Booking confirmed' },
 ];
-
-const dayButton = /(слотов|slots): \d+/;
 
 for (const { lng, time, next, submit, done } of cases) {
   test(`гость записывается на свободный слот (${lng})`, async ({ page, request }) => {
@@ -31,7 +29,7 @@ for (const { lng, time, next, submit, done } of cases) {
     // Календарь владельца общий для всех e2e и живёт между прогонами: берём случайный день,
     // где слот на своё время суток свободен (у каждого теста оно своё).
     const picked = await pickFreeSlot(request, id, time);
-    await page.getByRole('button', { name: dayButton }).nth(picked.dayIndex).click();
+    await openDay(page, picked, lng);
     await page.getByRole('button', { name: time, exact: true }).click();
     await page.getByRole('button', { name: next, exact: true }).click();
     await expect(page).toHaveURL(/\/confirm\?start=/);
@@ -52,7 +50,7 @@ for (const { lng, time, next, submit, done } of cases) {
 
     // И в интерфейсе: в том же дне этого времени больше нет.
     await page.goto(`/book/${id}`);
-    await page.getByRole('button', { name: dayButton }).nth(picked.dayIndex).click();
+    await openDay(page, picked, lng);
     await expect(page.getByRole('button', { name: time, exact: true })).toHaveCount(0);
   });
 }
