@@ -1,0 +1,35 @@
+# Стек
+
+- Контракт (`typespec/`):
+  - TypeSpec (`@typespec/http`, `@typespec/openapi3`)
+  - результат компиляции: `openapi.yaml` (OpenAPI 3.1.0) — единственный источник правды для фронтенда и тестов
+  - переопределения транзитивных зависимостей лежат в `typespec/pnpm-workspace.yaml`, как во фронтенде
+  - форматирование: `tsp format --check`
+- Версии JDK, Node и pnpm задаются только в `mise.toml`, версии библиотек — в Gradle version catalog и `package.json`.
+- Бэкенд:
+  - Kotlin + coroutines
+  - Ktor 3
+    - ручные роуты с kotlinx.serialization и ContentNegotiation.
+  - JUnit5 + Mockk
+    - тесты на testApplication (Ktor)
+    - Mockk используется точечно, хранилище в тестах настоящее (в памяти)
+    - ArchUnit: тесты на правила зависимостей между слоями из [architecture.md](architecture.md)
+    - Kover: отчёт о покрытии для `coverage:diff`
+  - Koin для DI
+  - Линтеры: ktlint (форматирование и стиль, Gradle-плагин `org.jlleitschuh.gradle.ktlint`) и detekt (статический анализ, Gradle-плагин `dev.detekt` 2.0.0-alpha: stable 1.23.x не поддерживает Kotlin 2.4; правила проекта в `backend/config/detekt/detekt.yml`); запуск `./gradlew ktlintCheck detekt`, автоисправление форматирования `./gradlew ktlintFormat`
+  - Сборка через Gradle (Kotlin DSL) + version catalog, слои — отдельные модули (см. [architecture.md](architecture.md))
+- Фронтенд:
+  - React + TypeScript + Vite
+  - Mantine для UI (`@mantine/form`, `@mantine/dates`)
+  - Иконки: `@tabler/icons-react`
+  - Шрифты Roboto и Roboto Mono: `@fontsource-variable/roboto`, `@fontsource-variable/roboto-mono` (самостоятельный хостинг, без Google Fonts CDN)
+  - React Router, TanStack Query, `libphonenumber-js` (зачем каждая — см. [frontend.md](frontend.md))
+  - i18n: `i18next` + `react-i18next` + `i18next-browser-languagedetector`, даты через `dayjs` с локалями `ru` и `en`
+  - Клиентский SDK: `@hey-api/openapi-ts` с плагинами `@tanstack/react-query` и `zod`, генерация в `frontend/src/api/generated/` (см. [api.md](api.md))
+  - Валидация форм: `zod`-схемы из SDK через `zodResolver` для `@mantine/form` (см. [frontend.md](frontend.md#библиотеки))
+  - Юнит-тесты: Vitest, запуск `pnpm test`, покрытие в формате Cobertura для `coverage:diff`
+  - Линтеры: ESLint (flat config, `typescript-eslint`, `eslint-plugin-react-hooks`), stylelint (`stylelint-config-standard`) и Prettier; проверка типов `tsc --noEmit` (TypeScript 6: typescript-eslint пока не поддерживает 7.x); запуск `pnpm lint` (ESLint и stylelint), `pnpm format:check`, `pnpm typecheck`
+  - Сборка pnpm; переопределения транзитивных зависимостей (например, из-за уязвимостей) лежат в `frontend/pnpm-workspace.yaml`
+- e2e тесты: Playwright, живёт во `frontend/`, запуск `mise run e2e`
+- Запуск через Dockerfile и docker-compose (см. [tooling.md](tooling.md))
+- Инструменты, проверки качества, задачи, CI и smoke-тест: см. [tooling.md](tooling.md)
