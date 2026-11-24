@@ -107,6 +107,10 @@ run = "pnpm dev"
 description = "Smoke-тест: бэкенд поднимается и отвечает на /api/health"
 run = "scripts/smoke.sh"
 
+[tasks.audit]
+description = "Calendar audit: образ в изолированном контейнере, проверки страниц и API на чтение (нужен Docker)"
+run = "scripts/calendar-audit.sh"
+
 [tasks.e2e]
 description = "Playwright e2e тесты"
 dir = "frontend"
