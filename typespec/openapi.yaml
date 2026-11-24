@@ -189,7 +189,7 @@ components:
           anyOf:
             - type: string
             - type: 'null'
-          description: '`null`, если заметки нет или она пустая.'
+          description: Тема разговора, которую указал гость. `null`, если темы нет или она пустая.
       examples:
         - id: 9b8a7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d
           meetingType:
@@ -236,7 +236,7 @@ components:
         notes:
           type: string
           maxLength: 500
-          description: Пустая строка приравнивается к отсутствию заметки.
+          description: Тема разговора, которую указал гость. Пустая строка приравнивается к отсутствию темы.
       description: 'Поля проверяются в порядке формы: `guestName` → `guestEmail` → `guestPhone` → `notes`.'
       examples:
         - meetingTypeId: 3f1c2a9e-5b7d-4c8e-9a01-2b3c4d5e6f70

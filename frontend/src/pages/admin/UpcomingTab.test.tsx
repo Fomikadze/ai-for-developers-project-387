@@ -35,7 +35,7 @@ async function openTab(upcoming: { status?: number; body: unknown }) {
   await userEvent.setup().click(await screen.findByRole('tab', { name: 'Предстоящие встречи' }));
 }
 
-it('показывает брони в порядке ответа API с данными гостя, временем в поясе владельца и заметками', async () => {
+it('показывает брони в порядке ответа API с данными гостя, временем в поясе владельца и темой разговора', async () => {
   await openTab({ body: [first, second] });
 
   const items = await screen.findAllByRole('listitem');
@@ -45,9 +45,9 @@ it('показывает брони в порядке ответа API с дан
   expect(within(items[0]!).getByText('Иван Петров')).toBeInTheDocument();
   expect(within(items[0]!).getByText('ivan@example.com')).toBeInTheDocument();
   expect(within(items[0]!).getByText('+77001234567')).toBeInTheDocument();
-  expect(within(items[0]!).getByText('Обсудить проект')).toBeInTheDocument();
+  expect(within(items[0]!).getByText('Тема разговора: Обсудить проект')).toBeInTheDocument();
   expect(within(items[1]!).getByText('Разбор')).toBeInTheDocument();
-  expect(within(items[1]!).queryByText('Обсудить проект')).not.toBeInTheDocument();
+  expect(within(items[1]!).queryByText(/Тема разговора/)).not.toBeInTheDocument();
 });
 
 it('показывает пустое состояние', async () => {

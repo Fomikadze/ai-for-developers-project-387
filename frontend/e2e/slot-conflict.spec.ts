@@ -31,7 +31,7 @@ test('слот заняли между выбором и отправкой: г�
   await page.getByLabel('Имя').fill('Анна Гостева');
   await page.getByLabel('Email').fill('anna@example.com');
   await page.getByLabel('Телефон').fill('+7 700 123 45 67');
-  await page.getByLabel('Заметки (необязательно)').fill('Обсудить проект');
+  await page.getByLabel('Тема разговора (необязательно)').fill('Обсудить проект');
 
   // Тот же старт занимают другим типом встречи, пока гость заполняет форму.
   const taken = await request.post('/api/bookings', {
@@ -60,7 +60,7 @@ test('слот заняли между выбором и отправкой: г�
   await expect(page.getByLabel('Имя')).toHaveValue('Анна Гостева');
   await expect(page.getByLabel('Email')).toHaveValue('anna@example.com');
   await expect(page.getByLabel('Телефон')).toHaveValue('+7 700 123 45 67');
-  await expect(page.getByLabel('Заметки (необязательно)')).toHaveValue('Обсудить проект');
+  await expect(page.getByLabel('Тема разговора (необязательно)')).toHaveValue('Обсудить проект');
 
   await page.getByRole('button', { name: 'Записаться' }).click();
   await expect(page).toHaveURL('/book/success');
