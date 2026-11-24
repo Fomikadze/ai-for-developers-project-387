@@ -7,7 +7,7 @@ test('бронь гостя видна владельцу во вкладке «
   const guestName = `Гость ${stamp.replace(/[\d-]/g, 'а')}`;
   const guestEmail = `guest-${stamp}@example.com`;
   const guestPhone = '+77001234567';
-  const notes = `Заметки ${stamp}`;
+  const notes = `Тема ${stamp}`;
 
   const created = await request.post('/api/meeting-types', {
     data: { title, description: 'E2E предстоящие', durationMinutes: 30 },
@@ -27,7 +27,7 @@ test('бронь гостя видна владельцу во вкладке «
   await page.getByLabel('Имя').fill(guestName);
   await page.getByLabel('Email').fill(guestEmail);
   await page.getByLabel('Телефон').fill(guestPhone);
-  await page.getByLabel('Заметки (необязательно)').fill(notes);
+  await page.getByLabel('Тема разговора (необязательно)').fill(notes);
   await page.getByRole('button', { name: 'Записаться' }).click();
   await expect(page).toHaveURL('/book/success');
 
@@ -39,5 +39,5 @@ test('бронь гостя видна владельцу во вкладке «
   await expect(meeting).toContainText(guestName);
   await expect(meeting).toContainText(guestEmail);
   await expect(meeting).toContainText(guestPhone);
-  await expect(meeting).toContainText(notes);
+  await expect(meeting).toContainText(`Тема разговора: ${notes}`);
 });

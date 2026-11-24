@@ -34,7 +34,7 @@ async function fill(user: ReturnType<typeof userEvent.setup>, values: Record<str
     name: /^Имя/,
     email: /^Email/,
     phone: /^Телефон/,
-    notes: /^Заметки/,
+    notes: /^Тема разговора/,
   };
   for (const [key, value] of Object.entries(values)) {
     await user.type(await screen.findByLabelText(labels[key]), value);
@@ -74,11 +74,11 @@ it('проверяет поля до отправки и не шлёт запр�
   expect(fetchMock.mock.calls.some(([r]) => (r as Request).method === 'POST')).toBe(false);
 });
 
-it('ошибка при заметке длиннее 500 символов', async () => {
+it('ошибка при теме разговора длиннее 500 символов', async () => {
   const user = userEvent.setup();
   await renderRoute(path, { api: base });
   await fill(user, { name: 'Иван', email: 'a@b.co', phone: '+77001234567' });
-  await user.click(await screen.findByLabelText(/^Заметки/));
+  await user.click(await screen.findByLabelText(/^Тема разговора/));
   await user.paste('x'.repeat(501));
   await user.click(screen.getByRole('button', { name: 'Записаться' }));
   expect(await screen.findByText(/Проверьте введённые данные/)).toBeInTheDocument();

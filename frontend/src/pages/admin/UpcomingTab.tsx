@@ -44,7 +44,9 @@ export function UpcomingTab() {
           <Text size="sm" c="dimmed">
             {booking.guestPhone}
           </Text>
-          {booking.notes ? <Text size="sm">{booking.notes}</Text> : null}
+          {booking.notes ? (
+            <Text size="sm">{t('admin.upcoming.notes', { notes: booking.notes })}</Text>
+          ) : null}
         </Card>
       ))}
     </Stack>
