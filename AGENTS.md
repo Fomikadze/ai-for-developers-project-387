@@ -71,6 +71,8 @@ pnpm --dir frontend exec playwright test <файл> -g "<имя теста>"
 
 Для Standards `REVIEW.md` идёт первым в списке источников стандартов. Итоговый отчёт ревью сохраняет эти поля у каждого замечания.
 
+Те же критерии проверяет воркфлоу `pr-review.yml` на каждом PR (описание в `README.md`, раздел «Независимое авторевью PR»). Если меняешь правила или формат замечания в `REVIEW.md`, сверь с ними промпт и JSON-схему в `pr-review.yml` и проверку в `scripts/pr-review-publish.sh`.
+
 ## Agent skills
 
 ### Issue tracker
