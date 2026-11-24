@@ -43,6 +43,7 @@ Cal.com это сервис, где пользователь публикует 
 | [docs/i18n.md](docs/i18n.md) | меняет тексты интерфейса, переводы или вывод дат и ошибок во `frontend/` |
 | [docs/previous-project.md](docs/previous-project.md) | требует исходной спецификации или причин решений первого проекта |
 | [docs/stack.md](docs/stack.md) | добавляет зависимость, выбирает библиотеку или пишет тесты |
+| [REVIEW.md](REVIEW.md) | проверяет чужой код или запускает авторевью (`code-review`): правила бронирования и формат замечания |
 | [docs/tooling.md](docs/tooling.md) | меняет `mise.toml`, `hk.pkl`, `.github/workflows/`, `scripts/`, конфигурацию проверок, Docker, сборку или запуск; запускает или останавливает серверы разработки; делает коммит |
 
 Структура репозитория: монорепозиторий из `typespec/` (контракт), `backend/` (Kotlin + Ktor) и `frontend/` (React + TypeScript). Файл `.github/workflows/hexlet-check.yml` не трогаем и не меняем.
