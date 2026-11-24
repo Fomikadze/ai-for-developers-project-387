@@ -177,7 +177,7 @@ model CreateBookingRequest {
   guestEmail: GuestEmail;
   guestPhone: E164Phone;
 
-  /** Пустая строка приравнивается к отсутствию заметки. */
+  /** Тема разговора, которую указал гость. Пустая строка приравнивается к отсутствию темы. */
   @maxLength(500)
   notes?: string;
 }
@@ -210,7 +210,7 @@ model Booking {
   guestEmail: string;
   guestPhone: string;
 
-  /** `null`, если заметки нет или она пустая. */
+  /** Тема разговора, которую указал гость. `null`, если темы нет или она пустая. */
   notes: string | null;
 }
 
