@@ -47,6 +47,27 @@ Cal.com это сервис, где пользователь публикует 
 
 Структура репозитория: монорепозиторий из `typespec/` (контракт), `backend/` (Kotlin + Ktor) и `frontend/` (React + TypeScript). Файл `.github/workflows/hexlet-check.yml` не трогаем и не меняем.
 
+## ИИ-агент в GitHub
+
+Воркфлоу [claudecode.yml](.github/workflows/claudecode.yml) запускает [Claude Code Action](https://code.claude.com/docs/en/github-actions) через установленный в репозиторий Claude GitHub App.
+
+| Параметр | Значение |
+| --- | --- |
+| Событие | `issue_comment` с `types: [created]`: новый комментарий в issue или в обсуждении PR. Правка комментария агента не запускает |
+| Кто запускает | Люди с ролью OWNER, MEMBER или COLLABORATOR. Команды ботов игнорируются, на PR из форка агент не запускается |
+| Модель | `claude-opus-5-5`, ключ в секрете `CLAUDE_CODE_OAUTH_TOKEN` |
+| Назначение | Отвечать на вопросы о коде и задачах и выполнять поручения из комментария |
+| Результаты | Ответ Claude комментарием в том же issue или PR и прогон [в Actions](https://github.com/Fomikadze/ai-for-developers-project-387/actions/workflows/claudecode.yml). Если поручено изменить код, агент может отправить коммиты в ветку |
+
+Набор команд: `mentions`. Агент запускается только по упоминанию `@claude` в тексте комментария, само поручение пишется рядом обычным текстом. Других команд и автоматических запусков (по метке, назначению или открытию PR) нет.
+
+| Команда `mentions` | Где | Что делает |
+| --- | --- | --- |
+| `@claude <вопрос>`, например `@claude explain this issue` | issue, PR | отвечает комментарием |
+| `@claude <поручение>`, например `@claude fix this issue` | issue, PR | работает с кодом и сообщает результат комментарием |
+
+Права, таймаут и очередь запусков описаны в [docs/tooling.md](docs/tooling.md).
+
 ## Установка
 
 ```bash
