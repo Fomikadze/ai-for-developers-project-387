@@ -12,12 +12,43 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  review:
+  # Предел запусков на один PR: агент работает только в первых MAX_RUNS запусках.
+  limit:
     # PR из форка не получают секретов, черновики и PR ботов не ревьюим.
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository &&
       !github.event.pull_request.draft &&
       github.event.pull_request.user.type == 'User'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: read # прошлые запуски этого workflow
+    outputs:
+      allowed: ${{ steps.count.outputs.allowed }}
+    steps:
+      - name: Count previous runs
+        id: count
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_CREATED_AT: ${{ github.event.pull_request.created_at }}
+          MAX_RUNS: 3
+        run: |
+          # Пропущенные целиком запуски (черновик) не считаются, отменённые считаются: агент мог начать работу.
+          previous="$(gh api --method GET "repos/$GITHUB_REPOSITORY/actions/workflows/pr-review.yml/runs" \
+            -f event=pull_request -f branch="$HEAD_REF" -f created=">=$PR_CREATED_AT" -F per_page=100 \
+            --jq "[.workflow_runs[] | select(.run_number < $GITHUB_RUN_NUMBER and .conclusion != \"skipped\")] | length")"
+          if [ "$previous" -lt "$MAX_RUNS" ]; then
+            echo "allowed=true" >> "$GITHUB_OUTPUT"
+            echo "Запуск авторевью $((previous + 1)) из $MAX_RUNS"
+          else
+            echo "allowed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Предел запусков авторевью на PR ($MAX_RUNS) исчерпан, ревью пропущено"
+          fi
+
+  review:
+    needs: limit
+    if: needs.limit.outputs.allowed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
