@@ -13,7 +13,7 @@
       "title": "Features",
       "items": [
         "Choose a meeting type and a convenient time",
-        "Quick booking with confirmation and notes",
+        "Quick booking with confirmation and a conversation topic",
         "Manage meeting types and view upcoming meetings in the admin panel"
       ]
     }
@@ -48,7 +48,8 @@
       "upcoming": "Upcoming meetings"
     },
     "upcoming": {
-      "empty": "No upcoming meetings yet."
+      "empty": "No upcoming meetings yet.",
+      "notes": "Conversation topic: {{notes}}"
     },
     "meetingTypes": {
       "listTitle": "Your meeting types",
@@ -79,7 +80,7 @@
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
-    "notes": "Notes (optional)",
+    "notes": "Conversation topic (optional)",
     "submit": "Book"
   },
   "success": {
